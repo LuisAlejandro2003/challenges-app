@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const SplashScreen(),
         '/home': (context) => const HomeScreen(),
-        '/contact': (context) => const ContactScreen(names: ['221245 + Darío Antonio Gutiérrez Álvarez', '213021 + Luis Alejandro Martinez Montoya']),
+        '/contact': (context) => const ContactScreen(),
         '/reto1': (context) => const Reto1Screen(),
         '/reto2': (context) => const Reto2Screen(),
         '/reto3': (context) => const Reto3Screen(),

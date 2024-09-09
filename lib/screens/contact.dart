@@ -61,13 +61,13 @@ class _ContactScreenState extends State<ContactScreen> with SingleTickerProvider
         }
       }
       _showNames = !_showNames;
-    });
+    });  
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: true, // Para que el gradiente esté detrás del AppBar
+      extendBodyBehindAppBar: true, 
       appBar: AppBar(
         title: const Text('Contactos', style: TextStyle(color: Colors.black)),
         actions: [
@@ -139,18 +139,25 @@ class _ContactScreenState extends State<ContactScreen> with SingleTickerProvider
             children: [
               IconButton(
                 icon: const Icon(Icons.home, color: Colors.black),
-                onPressed: () {},
+                onPressed: () {
+                    Navigator.pushNamed(context, '/home');
+                },
               ),
               const SizedBox(width: 30), // Espacio para el botón flotante
               IconButton(
                 icon: const Icon(Icons.chat_bubble_outline, color: Colors.black),
-                onPressed: () {},
+                onPressed: () {
+                   Navigator.pushNamed(context, '/contact'); // Redirige a ContactScreen
+                },
               ),
             ],
           ),
         ),
       ),
     );
+
+
+
   }
 
   Widget _buildItem(Map<String, String> contact, Animation<double> animation) {

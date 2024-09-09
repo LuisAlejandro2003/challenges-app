@@ -41,6 +41,8 @@ class HomeScreen extends StatelessWidget {
         ],
       ),
       extendBodyBehindAppBar: true,
+
+
       body: Stack(
         children: [
           // Fondo con gradiente
@@ -161,12 +163,16 @@ class HomeScreen extends StatelessWidget {
             children: [
               IconButton(
                 icon: const Icon(Icons.home, color: Colors.black),
-                onPressed: () {},
+                onPressed: () {
+                     Navigator.pushNamed(context, '/home'); // Redirige a HomeScreen
+                },
               ),
               const SizedBox(width: 30), // Espacio para el botón flotante
               IconButton(
                 icon: const Icon(Icons.chat_bubble_outline, color: Colors.black),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushNamed(context, '/contact');
+                },
               ),
             ],
           ),

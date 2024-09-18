@@ -5,6 +5,8 @@ import 'package:flutter_application/screens/reto3.dart';
 import 'screens/home.dart';
 import 'screens/contact.dart';
 import 'screens/splash.dart';
+import 'screens/contact.dart';
+
 
 void main() {
   runApp(const MyApp());

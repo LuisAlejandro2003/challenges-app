@@ -1,30 +1,5 @@
 import 'package:flutter/material.dart';
 
-void main() => runApp(const ContactApp());
-
-class ContactApp extends StatelessWidget {
-  const ContactApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-        primarySwatch: Colors.indigo,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-        ),
-        floatingActionButtonTheme: const FloatingActionButtonThemeData(
-          backgroundColor: Color(0xFFFFC1A8), // Botón flotante en color naranja
-        ),
-      ),
-      home: const ContactScreen(),
-      debugShowCheckedModeBanner: false,
-    );
-  }
-}
-
 class ContactScreen extends StatefulWidget {
   const ContactScreen({super.key});
 
@@ -32,44 +7,24 @@ class ContactScreen extends StatefulWidget {
   _ContactScreenState createState() => _ContactScreenState();
 }
 
-class _ContactScreenState extends State<ContactScreen> with SingleTickerProviderStateMixin {
-  final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
-  final List<Map<String, String>> _names = [];
-  final List<Map<String, String>> _predefinedNames = [
-    {'name': 'Darío Antonio Gutiérrez Álvarez', 'matricula': '221245'},
-    {'name': 'Luis Alejandro Martinez Montoya', 'matricula': '213021'}
+class _ContactScreenState extends State<ContactScreen> {
+  final List<Map<String, String>> _contacts = [
+    {'name': 'Luis Alejandro Martinez Montoya', 'matricula': '213021'},
   ];
-  bool _showNames = true;
-
-  void _toggleNames() {
-    setState(() {
-      if (_showNames) {
-        if (_names.isNotEmpty) {
-          for (int i = _names.length - 1; i >= 0; i--) {
-            _listKey.currentState?.removeItem(
-              i,
-              (context, animation) => _buildItem(_names[i], animation),
-              duration: const Duration(milliseconds: 500),
-            );
-          }
-          _names.clear();
-        }
-      } else {
-        for (int i = 0; i < _predefinedNames.length; i++) {
-          _names.add(_predefinedNames[i]);
-          _listKey.currentState?.insertItem(i, duration: const Duration(milliseconds: 500));
-        }
-      }
-      _showNames = !_showNames;
-    });  
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: true, 
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Contactos', style: TextStyle(color: Colors.black)),
+        title: const Text('Contacts', style: TextStyle(color: Colors.black)),
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.search, color: Colors.black),
@@ -83,7 +38,7 @@ class _ContactScreenState extends State<ContactScreen> with SingleTickerProvider
               // Acción de menú seleccionada
             },
             itemBuilder: (BuildContext context) {
-              return {'Configurar', 'Ayuda'}.map((String choice) {
+              return {'Settings', 'Help'}.map((String choice) {
                 return PopupMenuItem<String>(
                   value: choice,
                   child: Text(choice),
@@ -95,44 +50,22 @@ class _ContactScreenState extends State<ContactScreen> with SingleTickerProvider
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: Stack(
-        children: [
-          // Fondo degradado
-          Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xFFFDE5E7), Color(0xFFFFC1A8)],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-              ),
-            ),
-          ),
-          // Lista animada de contactos
-          Padding(
-            padding: const EdgeInsets.only(top: 100.0), // Ajuste para dejar espacio al AppBar
-            child: AnimatedList(
-              key: _listKey,
-              initialItemCount: _names.length,
-              itemBuilder: (context, index, animation) {
-                return _buildItem(_names[index], animation);
-              },
-            ),
-          ),
-        ],
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ListView.builder(
+          itemCount: _contacts.length,
+          itemBuilder: (context, index) {
+            return _buildContactCard(_contacts[index]);
+          },
+        ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _toggleNames,
-        tooltip: 'Agregar Contactos',
-        child: const Icon(Icons.add, color: Colors.white),
-        backgroundColor: const Color(0xFFFFC1A8), // Naranja personalizado
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+
       bottomNavigationBar: BottomAppBar(
         shape: const CircularNotchedRectangle(),
-        notchMargin: 6.0,
+        notchMargin: 8.0,
         color: Colors.white,
         elevation: 10,
-        child: Container(
+        child: SizedBox(
           height: 60.0,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -140,14 +73,14 @@ class _ContactScreenState extends State<ContactScreen> with SingleTickerProvider
               IconButton(
                 icon: const Icon(Icons.home, color: Colors.black),
                 onPressed: () {
-                    Navigator.pushNamed(context, '/home');
+                  Navigator.pushNamed(context, '/home');
                 },
               ),
               const SizedBox(width: 30), // Espacio para el botón flotante
               IconButton(
                 icon: const Icon(Icons.chat_bubble_outline, color: Colors.black),
                 onPressed: () {
-                   Navigator.pushNamed(context, '/contact'); // Redirige a ContactScreen
+                  Navigator.pushNamed(context, '/contact');
                 },
               ),
             ],
@@ -155,52 +88,73 @@ class _ContactScreenState extends State<ContactScreen> with SingleTickerProvider
         ),
       ),
     );
-
-
-
   }
 
-  Widget _buildItem(Map<String, String> contact, Animation<double> animation) {
-    return FadeTransition(
-      opacity: animation,
-      child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        elevation: 6, // Elevación para sombras suaves
-        margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-        child: ListTile(
-          leading: CircleAvatar(
-            backgroundColor: const Color(0xFFFFC1A8),
+  // Método para construir una tarjeta de contacto
+  Widget _buildContactCard(Map<String, String> contact) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: Colors.grey[100],
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          CircleAvatar(
+            backgroundColor: Colors.black,
             child: Text(
               contact['name']![0], // Inicial del nombre
               style: const TextStyle(color: Colors.white),
             ),
           ),
-          title: Text(contact['name']!),
-          subtitle: Text('Matrícula: ${contact['matricula']}'),
-          trailing: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              IconButton(
-                icon: const Icon(Icons.call, color: Colors.green),
-                onPressed: () {
-                  _showSnackbarMessage('Llamando a ${contact['name']}');
-                },
-              ),
-              IconButton(
-                icon: const Icon(Icons.message, color: Colors.blue),
-                onPressed: () {
-                  _showSnackbarMessage('Enviando mensaje a ${contact['name']}');
-                },
-              ),
-            ],
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  contact['name']!,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Matrícula: ${contact['matricula']}',
+                  style: const TextStyle(fontSize: 14, color: Colors.grey),
+                ),
+              ],
+            ),
           ),
-        ),
+          IconButton(
+            icon: const Icon(Icons.call, color: Colors.green),
+            onPressed: () {
+              _showSnackbarMessage('Calling ${contact['name']}');
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.message, color: Colors.blue),
+            onPressed: () {
+              _showSnackbarMessage('Messaging ${contact['name']}');
+            },
+          ),
+        ],
       ),
     );
   }
 
+  // Mostrar mensaje en Snackbar
   void _showSnackbarMessage(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
